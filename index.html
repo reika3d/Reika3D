@@ -31,7 +31,6 @@
     position: relative;
   }
 
-  /* ── Grade animada — ativa em todos os dispositivos ── */
   body::before {
     content: '';
     position: fixed;
@@ -47,7 +46,6 @@
     animation: gridScroll 12s linear infinite;
   }
 
-  /* Dispositivos com tela de baixa resolução (geralmente mais antigos/fracos): grade estática */
   @media (max-resolution: 1dppx) {
     body::before { animation: none; }
   }
@@ -68,10 +66,36 @@
     pointer-events: none;
   }
 
+  /* ── Marca d'água flutuante ── */
+  /* ── Marca d'água flutuante ── */
+  .watermark-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .wm {
+    position: absolute;
+    opacity: 0;
+    animation: wmFade var(--wm-dur, 6s) var(--wm-delay, 0s) infinite ease-in-out;
+    /* Amarelo dourado: satura para tom #F5C842 sobre fundo escuro */
+    filter: brightness(0) saturate(100%) invert(78%) sepia(60%) saturate(600%) hue-rotate(5deg) brightness(1.1);
+  }
+
+  @keyframes wmFade {
+    0%   { opacity: 0; }
+    25%  { opacity: 0.30; }
+    55%  { opacity: 0.38; }
+    80%  { opacity: 0.22; }
+    100% { opacity: 0; }
+  }
+
   /* ── Layout ── */
   .wrapper {
     position: relative;
-    z-index: 1;
+    z-index: 3;
     max-width: 460px;
     margin: 0 auto;
     padding: 28px 16px 64px;
@@ -118,7 +142,6 @@
     z-index: 0;
   }
 
-  /* Glow: desativado em mobile para não travar */
   .logo-ring::after {
     content: '';
     position: absolute;
@@ -137,7 +160,6 @@
 
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* Caixa interna do logo: quadrada com fundo preto para preservar o logo original */
   .logo-inner {
     width: 134px;
     height: 134px;
@@ -270,7 +292,7 @@
     color: #C9A040;
   }
 
-  /* ── Section label — centralizado com linhas laterais ── */
+  /* ── Section label ── */
   .section-label {
     font-family: 'Orbitron', sans-serif;
     font-size: 9px;
@@ -525,15 +547,18 @@
     100% { opacity: 0; transform: translateY(-100vh) translateX(var(--drift, 20px)); }
   }
 
-  /* ── Acessibilidade: respeita preferência do SO ── */
+  /* ── Acessibilidade ── */
   @media (prefers-reduced-motion: reduce) {
-    .logo-ring::before, .logo-ring::after, body::before, .particle { animation: none; }
+    .logo-ring::before, .logo-ring::after, body::before, .particle, .wm { animation: none; }
     .logo-ring::after { display: none; }
     * { animation-duration: 0.01ms !important; animation-delay: 0.01ms !important; }
   }
 </style>
 </head>
 <body>
+
+<!-- ══ MARCA D'ÁGUA ══ -->
+<div class="watermark-layer" id="wmLayer" aria-hidden="true"></div>
 
 <div class="particles" aria-hidden="true">
   <div class="particle" style="--x:8%;  --dur:9s;  --delay:0s;   --drift:28px;"></div>
@@ -588,9 +613,9 @@
     <div class="chips">
       <span class="chip">Miniaturas</span>
       <span class="chip">Decoração</span>
-      <span class="chip">Sob Encomenda</span>
       <span class="chip">Personalizados</span>
       <span class="chip">Action Figures</span>
+      <span class="chip">Sob Encomenda</span>
     </div>
   </div>
 
@@ -617,7 +642,7 @@
         </svg>
       </a>
 
-      <a class="link-card" href="https://wa.me/5511999999999?text=Olá!%20Vim%20pelo%20link%20da%20ReiKa%20e%20gostaria%20de%20um%20orçamento." target="_blank" rel="noopener"
+      <a class="link-card" href="https://wa.me/5512991841519?text=Olá!%20Vim%20pelo%20link%20da%20ReiKa%20e%20gostaria%20de%20um%20orçamento." target="_blank" rel="noopener"
          style="--card-accent:#25D366;--card-glow:rgba(37,211,102,0.07);--icon-bg:rgba(37,211,102,0.09);--icon-border:rgba(37,211,102,0.18);">
         <div class="link-icon">
           <svg viewBox="0 0 24 24" fill="none">
@@ -627,7 +652,7 @@
         </div>
         <div class="link-text">
           <span class="link-title">WhatsApp</span>
-          <span class="link-sub">Orçamento rápido · Atendimento direto</span>
+          <span class="link-sub">(12) 99184-1519 · Atendimento direto</span>
         </div>
         <svg class="link-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none">
           <path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
@@ -637,49 +662,8 @@
     </div>
   </div>
 
-  <!-- ══ LOJAS ONLINE ══ -->
-  <div class="link-group">
-    <div class="section-label">Lojas Online</div>
-    <div class="links">
-
-      <a class="link-card" href="https://shopee.com.br/" target="_blank" rel="noopener"
-         style="--card-accent:#EE4D2D;--card-glow:rgba(238,77,45,0.07);--icon-bg:rgba(238,77,45,0.09);--icon-border:rgba(238,77,45,0.18);">
-        <div class="link-icon">
-          <svg viewBox="0 0 24 24" fill="none">
-            <path d="M12 2C9.2 2 7 4.2 7 7H5l-1 13h16L19 7h-2c0-2.8-2.2-5-5-5z" stroke="#EE4D2D" stroke-width="1.7" stroke-linejoin="round"/>
-            <path d="M9 7c0-1.7 1.3-3 3-3s3 1.3 3 3" stroke="#EE4D2D" stroke-width="1.7" stroke-linecap="round"/>
-            <circle cx="9.5" cy="14" r="1" fill="#EE4D2D"/>
-            <circle cx="14.5" cy="14" r="1" fill="#EE4D2D"/>
-          </svg>
-        </div>
-        <div class="link-text">
-          <span class="link-title">Shopee</span>
-          <span class="link-sub">Loja oficial · Entrega para todo Brasil</span>
-        </div>
-        <svg class="link-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
-      </a>
-
-      <a class="link-card" href="https://www.mercadolivre.com.br/" target="_blank" rel="noopener"
-         style="--card-accent:#FFE600;--card-glow:rgba(255,230,0,0.06);--icon-bg:rgba(255,230,0,0.09);--icon-border:rgba(255,230,0,0.2);">
-        <div class="link-icon">
-          <svg viewBox="0 0 24 24" fill="none">
-            <ellipse cx="12" cy="12" rx="9.5" ry="9.5" stroke="#FFE600" stroke-width="1.7"/>
-            <path d="M7 12l3 3 7-7" stroke="#FFE600" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-        <div class="link-text">
-          <span class="link-title">Mercado Livre</span>
-          <span class="link-sub">Compre com segurança e parcelado</span>
-        </div>
-        <svg class="link-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
-      </a>
-
-    </div>
-  </div>
+  <!-- ══ LOJAS ONLINE (ocultas por enquanto) ══ -->
+  <!-- Shopee e Mercado Livre desativados temporariamente -->
 
   <!-- ══ YOUTUBE ══ -->
   <div class="link-group">
@@ -709,7 +693,7 @@
   <!-- ══ CTA ══ -->
   <div class="section-label" style="margin-bottom:12px;">Solicitar Orçamento</div>
   <div class="cta-wrap">
-    <a class="cta-btn cta-btn-primary" href="https://wa.me/5511999999999?text=Olá!%20Quero%20fazer%20um%20orçamento%20de%20impressão%203D." target="_blank" rel="noopener">
+    <a class="cta-btn cta-btn-primary" href="https://wa.me/5512991841519?text=Olá!%20Quero%20fazer%20um%20orçamento%20de%20impressão%203D." target="_blank" rel="noopener">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
         <path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.526 3.655 1.438 5.163L2 22l4.98-1.418A9.955 9.955 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2z" stroke="#1a0e00" stroke-width="2"/>
         <path d="M8.5 9.5c.2.8.7 1.7 1.5 2.5s1.7 1.3 2.5 1.5c.3.1.5 0 .7-.2l.6-.7c.2-.2.5-.2.7-.1l2 1c.3.1.4.5.2.7l-.5.7c-.7.9-1.8 1.2-2.8.8-1.5-.6-3-1.8-4-3s-1.8-2.9-1.5-4.2c.2-.9.9-1.6 1.8-1.7.3 0 .5.1.7.4l1 2c.1.2.1.5-.1.7l-.6.6c-.2.1-.2.4-.2.5z" fill="#1a0e00"/>
@@ -744,5 +728,59 @@
   </div>
 
 </div>
+
+<script>
+  // ── Marca d'água: logo RK3D aparece/desaparece aleatoriamente ──
+  (function() {
+    const layer = document.getElementById('wmLayer');
+    const LOGO_SRC = 'LOGOIMPRESSÃOCONTINUO.png';
+    const COUNT = 9; // quantidade de instâncias simultâneas
+
+    const positions = [
+      { left: '5%',  top: '8%'  },
+      { left: '55%', top: '5%'  },
+      { left: '25%', top: '22%' },
+      { left: '70%', top: '18%' },
+      { left: '10%', top: '42%' },
+      { left: '60%', top: '38%' },
+      { left: '35%', top: '58%' },
+      { left: '80%', top: '55%' },
+      { left: '15%', top: '75%' },
+      { left: '50%', top: '72%' },
+      { left: '75%', top: '80%' },
+      { left: '5%',  top: '88%' },
+    ];
+
+    for (let i = 0; i < COUNT; i++) {
+      const img = document.createElement('img');
+      img.src = LOGO_SRC;
+      img.className = 'wm';
+      img.alt = '';
+
+      // Tamanho próximo ao título "ReiKa" — visível mas discreto
+      const size = 80 + Math.floor(Math.random() * 30); // 80–110px
+      img.style.width = size + 'px';
+      img.style.height = 'auto';
+
+      // Posição aleatória
+      const pos = positions[i % positions.length];
+      img.style.left = pos.left;
+      img.style.top  = pos.top;
+
+      // Duração e delay aleatórios para cada elemento
+      const dur   = (5 + Math.random() * 9).toFixed(1) + 's';   // 5–14s
+      const delay = (Math.random() * 12).toFixed(1) + 's';       // 0–12s
+      img.style.setProperty('--wm-dur',   dur);
+      img.style.setProperty('--wm-delay', delay);
+
+      // Leve rotação para quebrar uniformidade
+      const rot = (Math.random() * 20 - 10).toFixed(1);
+      img.style.transform = `rotate(${rot}deg)`;
+
+      layer.appendChild(img);
+    }
+  })();
+</script>
+
 </body>
 </html>
