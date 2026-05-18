@@ -86,9 +86,9 @@
 
   @keyframes wmFade {
     0%   { opacity: 0; }
-    25%  { opacity: 0.30; }
-    55%  { opacity: 0.38; }
-    80%  { opacity: 0.22; }
+    25%  { opacity: 0.08; }
+    55%  { opacity: 0.12; }
+    80%  { opacity: 0.07; }
     100% { opacity: 0; }
   }
 
@@ -730,55 +730,52 @@
 </div>
 
 <script>
-  // ── Marca d'água: logo RK3D aparece/desaparece aleatoriamente ──
+  // ── Marca d'água: um logo por vez, posição aleatória a cada aparição ──
   (function() {
     const layer = document.getElementById('wmLayer');
     const LOGO_SRC = 'LOGOIMPRESSÃOCONTINUO.png';
-    const COUNT = 9; // quantidade de instâncias simultâneas
 
-    const positions = [
-      { left: '5%',  top: '8%'  },
-      { left: '55%', top: '5%'  },
-      { left: '25%', top: '22%' },
-      { left: '70%', top: '18%' },
-      { left: '10%', top: '42%' },
-      { left: '60%', top: '38%' },
-      { left: '35%', top: '58%' },
-      { left: '80%', top: '55%' },
-      { left: '15%', top: '75%' },
-      { left: '50%', top: '72%' },
-      { left: '75%', top: '80%' },
-      { left: '5%',  top: '88%' },
-    ];
+    const img = document.createElement('img');
+    img.src = LOGO_SRC;
+    img.alt = '';
+    img.style.position = 'absolute';
+    img.style.width = '90px';
+    img.style.height = 'auto';
+    img.style.opacity = '0';
+    img.style.transition = 'opacity 2s ease';
+    img.style.filter = 'brightness(0) saturate(100%) invert(78%) sepia(60%) saturate(600%) hue-rotate(5deg) brightness(1.15)';
+    img.style.pointerEvents = 'none';
+    layer.appendChild(img);
 
-    for (let i = 0; i < COUNT; i++) {
-      const img = document.createElement('img');
-      img.src = LOGO_SRC;
-      img.className = 'wm';
-      img.alt = '';
-
-      // Tamanho próximo ao título "ReiKa" — visível mas discreto
-      const size = 80 + Math.floor(Math.random() * 30); // 80–110px
-      img.style.width = size + 'px';
-      img.style.height = 'auto';
-
-      // Posição aleatória
-      const pos = positions[i % positions.length];
-      img.style.left = pos.left;
-      img.style.top  = pos.top;
-
-      // Duração e delay aleatórios para cada elemento
-      const dur   = (5 + Math.random() * 9).toFixed(1) + 's';   // 5–14s
-      const delay = (Math.random() * 12).toFixed(1) + 's';       // 0–12s
-      img.style.setProperty('--wm-dur',   dur);
-      img.style.setProperty('--wm-delay', delay);
-
-      // Leve rotação para quebrar uniformidade
+    function showNext() {
+      // Posição aleatória dentro da tela (evita bordas)
+      const x = 5 + Math.random() * 80; // 5%–85%
+      const y = 5 + Math.random() * 85; // 5%–90%
       const rot = (Math.random() * 20 - 10).toFixed(1);
-      img.style.transform = `rotate(${rot}deg)`;
 
-      layer.appendChild(img);
+      img.style.left = x.toFixed(1) + '%';
+      img.style.top  = y.toFixed(1) + '%';
+      img.style.transform = 'rotate(' + rot + 'deg)';
+      img.style.opacity = '0';
+
+      // Fade in
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          img.style.opacity = '0.12';
+        });
+      });
+
+      // Fade out após 3.5s visível, depois reagenda
+      setTimeout(() => {
+        img.style.opacity = '0';
+        // Próxima aparição: entre 6s e 14s depois do fade out
+        const next = 6000 + Math.random() * 8000;
+        setTimeout(showNext, next + 2000); // +2s do tempo do fade out
+      }, 3500);
     }
+
+    // Primeira aparição com delay inicial
+    setTimeout(showNext, 2000 + Math.random() * 4000);
   })();
 </script>
 
