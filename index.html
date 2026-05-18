@@ -730,52 +730,42 @@
 </div>
 
 <script>
-  // ── Marca d'água: um logo por vez, posição aleatória a cada aparição ──
   (function() {
     const layer = document.getElementById('wmLayer');
-    const LOGO_SRC = 'LOGOIMPRESSÃOCONTINUO.png';
-
     const img = document.createElement('img');
-    img.src = LOGO_SRC;
+    img.src = 'LOGOIMPRESSÃOCONTINUO.png';
     img.alt = '';
-    img.style.position = 'absolute';
-    img.style.width = '90px';
-    img.style.height = 'auto';
-    img.style.opacity = '0';
-    img.style.transition = 'opacity 2s ease';
-    img.style.filter = 'brightness(0) saturate(100%) invert(78%) sepia(60%) saturate(600%) hue-rotate(5deg) brightness(1.15)';
-    img.style.pointerEvents = 'none';
+    img.style.cssText = [
+      'position:absolute',
+      'width:90px',
+      'height:auto',
+      'opacity:0',
+      'transition:opacity 2.5s ease',
+      'pointer-events:none',
+      'filter:brightness(0) saturate(100%) invert(78%) sepia(60%) saturate(600%) hue-rotate(5deg) brightness(1.1) opacity(0.5)'
+    ].join(';');
     layer.appendChild(img);
 
-    function showNext() {
-      // Posição aleatória dentro da tela (evita bordas)
-      const x = 5 + Math.random() * 80; // 5%–85%
-      const y = 5 + Math.random() * 85; // 5%–90%
-      const rot = (Math.random() * 20 - 10).toFixed(1);
+    function next() {
+      // Nova posição aleatória
+      img.style.left = (5 + Math.random() * 80).toFixed(1) + '%';
+      img.style.top  = (5 + Math.random() * 82).toFixed(1) + '%';
+      img.style.transform = 'rotate(' + (Math.random()*16-8).toFixed(1) + 'deg)';
 
-      img.style.left = x.toFixed(1) + '%';
-      img.style.top  = y.toFixed(1) + '%';
-      img.style.transform = 'rotate(' + rot + 'deg)';
-      img.style.opacity = '0';
+      // Fade in até 5% de opacidade — bem transparente
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        img.style.opacity = '0.05';
+      }));
 
-      // Fade in
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          img.style.opacity = '0.12';
-        });
-      });
-
-      // Fade out após 3.5s visível, depois reagenda
+      // Fica visível 4s, depois fade out, depois chama next()
       setTimeout(() => {
         img.style.opacity = '0';
-        // Próxima aparição: entre 6s e 14s depois do fade out
-        const next = 6000 + Math.random() * 8000;
-        setTimeout(showNext, next + 2000); // +2s do tempo do fade out
-      }, 3500);
+        setTimeout(next, 2500 + Math.random() * 5000); // espera sumir + pausa
+      }, 4000);
     }
 
-    // Primeira aparição com delay inicial
-    setTimeout(showNext, 2000 + Math.random() * 4000);
+    // Começa após 3s
+    setTimeout(next, 3000);
   })();
 </script>
 
